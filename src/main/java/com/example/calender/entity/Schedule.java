@@ -1,37 +1,74 @@
 package com.example.calender.entity;
 
 import java.time.*;
-
-import jakarta.persistence.Column;
 import lombok.*;
 
 @Getter
-@AllArgsConstructor
 public class Schedule {
-    @Setter
-    private Long id;
-    @Column(name = "content")
-    private String task;
-    @Column(name = "userName")
-    private String userName;
-    @Column(name = "password")
-    private String password;
-    @Column(name = )
+    private Long contentId;
+    private String content;
+    private String userId;
     private LocalDateTime generatedTime;
     private LocalDateTime modifiedTime;
 
-    public Schedule(String task, String userName, String password, LocalDateTime generatedTime, LocalDateTime modifiedTime){
-        this.task = task;
-        this.userName = userName;
-        this.password = password;
+    public Schedule(String content, String userId, LocalDateTime generatedTime){
+        this.content = content;
+        this.userId = userId;
+        this.generatedTime = generatedTime;
+        this.modifiedTime = generatedTime;
+    }
+
+    public Schedule(Long contentId, String content, String userId, LocalDateTime generatedTime, LocalDateTime modifiedTime){
+        this.contentId = contentId;
+        this.content = content;
+        this.userId = userId;
         this.generatedTime = generatedTime;
         this.modifiedTime = modifiedTime;
     }
 
-    public void update(String task, String userName, String password){
-        this.task = task;
-        this.userName = userName;
-        this.password = password;
+    public Long getContentId(){
+        return contentId;
+    }
+
+    public void setContentId(Long contentId){
+        this.contentId = contentId;
+    }
+
+    public String getContent(){
+        return content;
+    }
+
+    public void setContent(String content){
+        this.content = content;
+    }
+
+    public String getUserId(){
+        return userId;
+    }
+
+    public void setUserId(String userId){
+        this.userId = userId;
+    }
+
+    public LocalDateTime getGeneratedTime(){
+        return generatedTime;
+    }
+
+    public void setGeneratedTime(LocalDateTime generatedTime){
+        this.generatedTime = generatedTime;
+    }
+
+    public LocalDateTime getModifiedTime(){
+        return modifiedTime;
+    }
+
+    public void setModifiedTime(LocalDateTime modifiedTime){
+        this.modifiedTime = modifiedTime;
+    }
+
+    public void update(String content, String userId){
+        this.content = content;
+        this.userId = userId;
         this.modifiedTime = LocalDateTime.now();
     }
 }

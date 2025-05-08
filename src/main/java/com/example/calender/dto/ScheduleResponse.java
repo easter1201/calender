@@ -6,20 +6,20 @@ import lombok.*;
 
 @Getter
 public class ScheduleResponse {
-    private Long id;
+    private Long contentId;
 
-    private String task;
+    private String content;
 
-    private String userName;
+    private String userId;
 
     private LocalDateTime generatedTime;
 
     private LocalDateTime modifiedTime;
 
     public ScheduleResponse(Schedule schedule){
-        this.id = schedule.getId();
-        this.task = schedule.getTask();
-        this.userName = schedule.getUserName();
+        this.contentId = schedule.getContentId();
+        this.content = schedule.getContent();
+        this.userId = schedule.getUserId();
         this.generatedTime = schedule.getGeneratedTime();
         this.modifiedTime = schedule.getModifiedTime();
     }

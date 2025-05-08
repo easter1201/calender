@@ -20,7 +20,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     @Override
     public ScheduleResponse saveSchedule(ScheduleRequest scheduleRequest){
         LocalDateTime now = LocalDateTime.now();
-        Schedule schedule = new Schedule(null, scheduleRequest.getTask(), scheduleRequest.getUserName(), scheduleRequest.getPassword(), now, now);
+        Schedule schedule = new Schedule(scheduleRequest.getContent(), scheduleRequest.getUserId(), now);
 
         Schedule savedSchedule = scheduleRepository.saveSchedule(schedule);
 
