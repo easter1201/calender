@@ -1,6 +1,6 @@
 CREATE TABLE user(
     user_id VARCHAR(50) PRIMARY KEY,
-    email VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(100),
     password VARCHAR(255) NOT NULL
 );
 
