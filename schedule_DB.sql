@@ -1,19 +1,15 @@
 CREATE TABLE user(
-    user_id VARCHAR(50) PRIMARY KEY,
-    email VARCHAR(100),
+    user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(255),
+    email VARCHAR(255),
     password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE schedule(
     content_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     content TEXT NOT NULL,
-    user_id VARCHAR(50) NOT NULL,
+    user_id BIGINT NOT NULL,
+    created_time TIMESTAMP,
+    updated_time TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user(user_id)
-);
-
-CREATE TABLE date(
-    content_id BIGINT PRIMARY KEY,
-    created_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (content_id) REFERENCES schedule(content_id)
 );

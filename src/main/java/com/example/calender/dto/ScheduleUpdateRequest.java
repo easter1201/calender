@@ -4,9 +4,8 @@ import lombok.*;
 
 @Getter
 @Setter
-public class ScheduleRequest {
+public class ScheduleUpdateRequest {
     private String content;
     private String userName;
     private String password;
-    private String email;
 }

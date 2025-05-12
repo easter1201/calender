@@ -1,38 +1,31 @@
 package com.example.calender.entity;
 
+
+import jakarta.persistence.Column;
 import lombok.*;
+
+@Getter
+@Setter
 public class User {
-    private String userId;
+    private Long userId;
+    private String userName;
     private String email;
     private String password;
 
-    public User(String userId, String email, String password){
+    public User(){
+
+    }
+
+    public User(Long userId,String userName, String email, String password){
         this.userId = userId;
+        this.userName = userName;
         this.email = email;
         this.password = password;
     }
 
-    public String getUserId(){
-        return userId;
-    }
-
-    public void setUserId(String userId){
-        this.userId = userId;
-    }
-
-    public String getEmail(){
-        return email;
-    }
-
-    public void setEmail(){
+    public User(String userName, String email, String password){
+        this.userName = userName;
         this.email = email;
-    }
-
-    public String getPassword(){
-        return password;
-    }
-
-    public void setPassword(){
         this.password = password;
     }
 }

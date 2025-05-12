@@ -3,9 +3,12 @@ package com.example.calender.controller;
 import com.example.calender.service.*;
 import com.example.calender.dto.*;
 import com.example.calender.repository.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -23,12 +26,6 @@ public class ScheduleController {
         return new ResponseEntity<>(createdSchedule, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ScheduleResponse>> getAllSchedules(){
-        List<ScheduleResponse> schedules = scheduleService.getAllSchedules();
-        return new ResponseEntity<>(schedules, HttpStatus.CREATED);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<ScheduleResponse> getScheduleById(@PathVariable Long id){
         ScheduleResponse schedule = scheduleService.getScheduleById(id);
@@ -36,8 +33,24 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id){
-        scheduleService.deleteSchedule(id);
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id, @RequestBody PasswordRequest request){
+        scheduleService.deleteSchedule(id, request.getPassword());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ScheduleResponse>> getSchedules(@RequestParam(required = false) Long userId, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        List<ScheduleResponse> result;
+        if(userId == null && date == null){
+            result = scheduleService.getAllSchedules();
+        }
+        else result = scheduleService.getFilteredSchedules(userId, date);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ScheduleResponse> updateSchedule(@PathVariable("id") Long contentId, @RequestBody ScheduleUpdateRequest request){
+        ScheduleResponse updatedSchedule = scheduleService.updateSchedule(contentId, request.getContent(), request.getUserName(), request.getPassword());
+        return new ResponseEntity<>(updatedSchedule, HttpStatus.OK);
     }
 }

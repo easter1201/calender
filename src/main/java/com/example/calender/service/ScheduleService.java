@@ -2,6 +2,8 @@ package com.example.calender.service;
 
 import com.example.calender.entity.Schedule;
 import com.example.calender.dto.*;
+
+import java.time.LocalDate;
 import java.util.*;
 
 public interface ScheduleService {
@@ -9,11 +11,11 @@ public interface ScheduleService {
 
     List<ScheduleResponse> getAllSchedules();
 
+    List<ScheduleResponse> getFilteredSchedules(Long userId, LocalDate date);
+
     ScheduleResponse getScheduleById(Long id);
 
-    //ScheduleResponse updateSchedule(Long id, String task, String userName, String password);
+    ScheduleResponse updateSchedule(Long contentId, String newContent, String newUserName, String password);
 
-    //ScheduleResponse updateTask(Long id, String task);
-
-    void deleteSchedule(Long id);
+    void deleteSchedule(Long id, String password);
 }
