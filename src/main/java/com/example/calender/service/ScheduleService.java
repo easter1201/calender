@@ -18,4 +18,8 @@ public interface ScheduleService {
     ScheduleResponse updateSchedule(Long contentId, String newContent, String newUserName, String password);
 
     void deleteSchedule(Long id, String password);
+
+    PagedScheduleResponse getAllSchedulesPaged(int page, int size);
+
+    PagedScheduleResponse getFilteredSchedulesPaged(Long userId, LocalDate date, int page, int size);
 }

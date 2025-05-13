@@ -122,4 +122,71 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         if(cnt != null && cnt > 0) return true;
         else return false;
     }
+
+    @Override
+    public List<Schedule> findFilteredPage(Long userId, LocalDate date, int set, int size){
+        StringBuilder sql = new StringBuilder("SELECT s.*, u.user_name FROM schedule s JOIN user u ON s.user_id = u.user_id WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if(userId != null){
+            sql.append(" AND s.user_id = ?");
+            params.add(userId);
+        }
+        if(date != null){
+            sql.append(" AND DATE(s.updated_time) = ?");
+            params.add(Date.valueOf(date));
+        }
+        sql.append(" ORDER BY s.updated_time DESC LIMIT ? OFFSET ?");
+        params.add(size);
+        params.add(set);
+        return jdbcTemplate.query(sql.toString(), params.toArray(), (rs, rowNum) ->{
+            Schedule schedule = new Schedule(
+                    rs.getLong("content_id"),
+                    rs.getString("content"),
+                    rs.getLong("user_id"),
+                    rs.getTimestamp("created_time").toLocalDateTime(),
+                    rs.getTimestamp("updated_time").toLocalDateTime()
+            );
+            schedule.setUserName(rs.getString("user_name"));
+            return schedule;
+        });
+    }
+
+    @Override
+    public List<Schedule> findPaged(int set, int size){
+        String sql = "SELECT s.*, u.user_name FROM schedule s JOIN user u ON s.user_id = u.user_id ORDER BY s.updated_time DESC LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(sql, new Object[]{size, set}, (rs, rowNum) -> {
+            Schedule schedule = new Schedule(
+                    rs.getLong("content_id"),
+                    rs.getString("content"),
+                    rs.getLong("user_id"),
+                    rs.getTimestamp("created_time").toLocalDateTime(),
+                    rs.getTimestamp("updated_time").toLocalDateTime()
+            );
+            schedule.setUserName(rs.getString("user_name"));
+            return schedule;
+        });
+    }
+
+    @Override
+    public long countAll(){
+        String sql = "SELECT COUNT(*) FROM schedule";
+        return jdbcTemplate.queryForObject(sql, Long.class);
+    }
+
+    @Override
+    public long countByFilter(Long userId, LocalDate date){
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM schedule WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if(userId != null){
+            sql.append(" AND user_id = ?");
+            params.add(userId);
+        }
+        if(date != null){
+            sql.append(" AND DATE(updated_time) = ?");
+            params.add(Date. valueOf(date));
+        }
+        return jdbcTemplate.queryForObject(sql.toString(), params.toArray(), Long.class);
+    }
 }

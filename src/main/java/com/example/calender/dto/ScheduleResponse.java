@@ -22,13 +22,4 @@ public class ScheduleResponse {
         this.generatedTime = schedule.getGeneratedTime();
         this.modifiedTime = schedule.getModifiedTime();
     }
-
-    /*public ScheduleResponse(Schedule schedule){
-        this.contentId = schedule.getContentId();
-        this.content = schedule.getContent();
-        this.userId = schedule.getUserId();
-        this.generatedTime = schedule.getGeneratedTime();
-        this.modifiedTime = schedule.getModifiedTime();
-    }
-     */
 }

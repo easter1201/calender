@@ -100,4 +100,34 @@ public class ScheduleServiceImpl implements ScheduleService{
 
         return new ScheduleResponse(schedule, newUserName);
     }
+
+    @Override
+    public PagedScheduleResponse getAllSchedulesPaged(int page, int size){
+        int set = page * size;
+        List<Schedule> schedules = scheduleRepository.findPaged(set, size);
+        long totalCnt = scheduleRepository.countAll();
+
+        List<ScheduleResponse> responses = schedules.stream()
+                .map(schedule -> {
+                    User user = userRepository.findById(schedule.getUserId());
+                    String userName = (user != null) ? user.getUserName() : "Unknown";
+                    return new ScheduleResponse(schedule, userName);
+                }).collect(Collectors.toList());
+        return new PagedScheduleResponse(page, size, totalCnt, responses);
+    }
+
+    @Override
+    public PagedScheduleResponse getFilteredSchedulesPaged(Long userId, LocalDate date, int page, int size){
+        int set = page * size;
+        List<Schedule> schedules = scheduleRepository.findFilteredPage(userId, date, set, size);
+        long totalCnt = scheduleRepository.countByFilter(userId, date);
+
+        List<ScheduleResponse> responses = schedules.stream().map(
+                schedule -> {
+                    User user = userRepository.findById(schedule.getUserId());
+                    String userName = (user != null) ? user.getUserName() : "Unknown";
+                    return new ScheduleResponse(schedule, userName);
+                }).collect(Collectors.toList());
+        return new PagedScheduleResponse(page, size, totalCnt, responses);
+    }
 }

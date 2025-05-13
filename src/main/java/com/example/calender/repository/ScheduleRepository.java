@@ -18,4 +18,10 @@ public interface ScheduleRepository{
     void updateSchedule(Schedule schedule);
 
     boolean checkPassword(Long userId, String password);
+
+    List<Schedule> findPaged(int set, int size);
+
+    List<Schedule> findFilteredPage(Long userId, LocalDate date, int set, int size);
+    long countAll();
+    long countByFilter(Long userId, LocalDate date);
 }

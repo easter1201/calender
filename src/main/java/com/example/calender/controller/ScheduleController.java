@@ -39,13 +39,11 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ScheduleResponse>> getSchedules(@RequestParam(required = false) Long userId, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
-        List<ScheduleResponse> result;
+    public ResponseEntity<PagedScheduleResponse> getSchedules(@RequestParam(required = false) Long userId, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         if(userId == null && date == null){
-            result = scheduleService.getAllSchedules();
+            return ResponseEntity.ok(scheduleService.getAllSchedulesPaged(page, size));
         }
-        else result = scheduleService.getFilteredSchedules(userId, date);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        else return ResponseEntity.ok(scheduleService.getFilteredSchedulesPaged(userId, date, page, size));
     }
 
     @PutMapping("/{id}")
