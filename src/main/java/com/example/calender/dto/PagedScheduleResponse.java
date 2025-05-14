@@ -11,7 +11,7 @@ public class PagedScheduleResponse {
     private long elements;
     private List<ScheduleResponse> schedules;
 
-    public PagedScheduleResponse(int page, int size, long elements, List<ScheduleResponse> schedules){
+    public PagedScheduleResponse(int page, int size, long elements, List<ScheduleResponse> schedules){ //페이지네이션
         this.page = page;
         this.size = size;
         this.elements = elements;

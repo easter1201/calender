@@ -20,25 +20,25 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
-    @PostMapping
+    @PostMapping //일정 생성
     public ResponseEntity<ScheduleResponse> createSchedule(@RequestBody ScheduleRequest scheduleRequest){
         ScheduleResponse createdSchedule = scheduleService.saveSchedule(scheduleRequest);
         return new ResponseEntity<>(createdSchedule, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") //특정 일정 조회
     public ResponseEntity<ScheduleResponse> getScheduleById(@PathVariable Long id){
         ScheduleResponse schedule = scheduleService.getScheduleById(id);
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") //일정 삭제
     public ResponseEntity<Void> deleteSchedule(@PathVariable Long id, @RequestBody PasswordRequest request){
         scheduleService.deleteSchedule(id, request.getPassword());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping
+    @GetMapping //일정 전체 조회
     public ResponseEntity<PagedScheduleResponse> getSchedules(@RequestParam(required = false) Long userId, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         if(userId == null && date == null){
             return ResponseEntity.ok(scheduleService.getAllSchedulesPaged(page, size));
@@ -46,7 +46,7 @@ public class ScheduleController {
         else return ResponseEntity.ok(scheduleService.getFilteredSchedulesPaged(userId, date, page, size));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") //일정 수정
     public ResponseEntity<ScheduleResponse> updateSchedule(@PathVariable("id") Long contentId, @RequestBody ScheduleUpdateRequest request){
         ScheduleResponse updatedSchedule = scheduleService.updateSchedule(contentId, request.getContent(), request.getUserName(), request.getPassword());
         return new ResponseEntity<>(updatedSchedule, HttpStatus.OK);

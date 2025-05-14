@@ -22,7 +22,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public ScheduleResponse saveSchedule(ScheduleRequest scheduleRequest){
+    public ScheduleResponse saveSchedule(ScheduleRequest scheduleRequest){ //일정 저장
         User user = userRepository.findByUserName(scheduleRequest.getUserName());
         if(user == null){
             System.out.println("신규 등록: " + scheduleRequest.getUserName() + scheduleRequest.getEmail() + scheduleRequest.getPassword());
@@ -41,7 +41,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public List<ScheduleResponse> getAllSchedules(){
+    public List<ScheduleResponse> getAllSchedules(){ //전체 일정 조회
         List<Schedule> schedules = scheduleRepository.findAll();
         return schedules.stream().map(schedule -> {
             User user = userRepository.findById(schedule.getUserId());
@@ -51,7 +51,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public ScheduleResponse getScheduleById(Long id){
+    public ScheduleResponse getScheduleById(Long id){ //특정 일정 조회 - ID값 기반
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ScheduleNotFoundException("찾을 수 없는 일정입니다."));
 
@@ -60,7 +60,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public void deleteSchedule(Long id, String password){
+    public void deleteSchedule(Long id, String password){ //일정 삭제
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ScheduleNotFoundException("제거할 수 없습니다."));
 
@@ -72,8 +72,10 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public List<ScheduleResponse> getFilteredSchedules(Long userId, LocalDate date){
+    public List<ScheduleResponse> getFilteredSchedules(Long userId, LocalDate date){ //특정 일정 조회 - ID, 수정일 기반
         List<Schedule> schedules = scheduleRepository.findByFilter(userId, date);
+        if(schedules.isEmpty()) throw new ScheduleNotFoundException("일정 없음");
+
         return schedules.stream().map(schedule -> {
             User user = userRepository.findById(schedule.getUserId());
             String userName = (user != null) ? user.getUserName() : "Unknown";
@@ -82,7 +84,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public ScheduleResponse updateSchedule(Long contentId, String newContent, String newUserName, String password){
+    public ScheduleResponse updateSchedule(Long contentId, String newContent, String newUserName, String password){ //일정 수정
         Schedule schedule = scheduleRepository.findById(contentId)
                 .orElseThrow(() -> new ScheduleNotFoundException("일정 없음"));
 
@@ -102,7 +104,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public PagedScheduleResponse getAllSchedulesPaged(int page, int size){
+    public PagedScheduleResponse getAllSchedulesPaged(int page, int size){ //전체 일정 조회 - 페이지화
         int set = page * size;
         List<Schedule> schedules = scheduleRepository.findPaged(set, size);
         long totalCnt = scheduleRepository.countAll();
@@ -121,7 +123,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public PagedScheduleResponse getFilteredSchedulesPaged(Long userId, LocalDate date, int page, int size){
+    public PagedScheduleResponse getFilteredSchedulesPaged(Long userId, LocalDate date, int page, int size){ //특정 일정 조회 - 페이지화
         int set = page * size;
         List<Schedule> schedules = scheduleRepository.findFilteredPage(userId, date, set, size);
         long totalCnt = scheduleRepository.countByFilter(userId, date);

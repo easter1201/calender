@@ -17,7 +17,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override
+    @Override //일정 저장
     public Schedule saveSchedule(Schedule schedule, String userName, String password, String email){
         userExist(schedule.getUserId(), userName, password, email);
 
@@ -30,7 +30,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         return schedule;
     }
 
-    @Override
+    @Override //일정 전체 조회
     public List<Schedule> findAll(){
         String sql = "SELECT s.content_id, s.content, s.user_id, s.created_time, s.updated_time, u.user_name FROM schedule s JOIN user u ON s.user_id = u.user_id ORDER BY updated_time DESC";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
@@ -46,7 +46,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         });
     }
 
-    @Override
+    @Override //특정 일정 조회
     public Optional<Schedule> findById(Long id){
         String sql = "SELECT * FROM schedule WHERE content_id = ?";
         Schedule schedule = jdbcTemplate.queryForObject(sql, new Object[]{id},
@@ -61,13 +61,13 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         return Optional.ofNullable(schedule);
     }
 
-    @Override
+    @Override //일정 삭제
     public void deleteSchedule(Schedule schedule){
         String sql = "DELETE FROM schedule WHERE content_id = ?";
         jdbcTemplate.update(sql, schedule.getContentId());
     }
 
-    @Override
+    @Override //일정 생성 시 기존유저와 동일한 입력값인지 확인, 기존 유저가 없는 경우 생성, 아닌 경우 해당 유저 정보 활용
     public void userExist(Long userId, String userName, String password, String email){
         String check = "SELECT COUNT(*) FROM user WHERE user_id = ?";
         Integer cnt = jdbcTemplate.queryForObject(check, Integer.class, userId);
@@ -78,7 +78,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         }
     }
 
-    @Override
+    @Override //특정 일정 조회 쿼리
     public List<Schedule> findByFilter(Long userId, LocalDate date){
         StringBuilder sql = new StringBuilder("SELECT s.content_id, s.content, s.user_id, s.created_time, s.updated_time, u.user_name FROM schedule s JOIN user u ON s.user_id = u.user_id WHERE 1=1");
 
@@ -108,13 +108,13 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         });
     }
 
-    @Override
+    @Override //일정 수정
     public void updateSchedule(Schedule schedule){
         String sql = "UPDATE schedule SET content = ?, updated_time = ? WHERE content_id = ?";
         jdbcTemplate.update(sql, schedule.getContent(), Timestamp.valueOf(schedule.getModifiedTime()), schedule.getContentId());
     }
 
-    @Override
+    @Override //비밀번호 확인
     public boolean checkPassword(Long userId, String password){
         String sql = "SELECT COUNT(*) FROM user WHERE user_id = ? AND password = ?";
         Integer cnt = jdbcTemplate.queryForObject(sql, Integer.class, userId, password);
@@ -123,7 +123,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         else return false;
     }
 
-    @Override
+    @Override //페이지화된 특정 일정 조회
     public List<Schedule> findFilteredPage(Long userId, LocalDate date, int set, int size){
         StringBuilder sql = new StringBuilder("SELECT s.*, u.user_name FROM schedule s JOIN user u ON s.user_id = u.user_id WHERE 1=1");
         List<Object> params = new ArrayList<>();
@@ -152,7 +152,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         });
     }
 
-    @Override
+    @Override //페이지화된 전체 일정 조회
     public List<Schedule> findPaged(int set, int size){
         String sql = "SELECT s.*, u.user_name FROM schedule s JOIN user u ON s.user_id = u.user_id ORDER BY s.updated_time DESC LIMIT ? OFFSET ?";
         return jdbcTemplate.query(sql, new Object[]{size, set}, (rs, rowNum) -> {
@@ -169,12 +169,12 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public long countAll(){
+    public long countAll(){ //일정의 전체 갯수
         String sql = "SELECT COUNT(*) FROM schedule";
         return jdbcTemplate.queryForObject(sql, Long.class);
     }
 
-    @Override
+    @Override //특정 일정의 갯수
     public long countByFilter(Long userId, LocalDate date){
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM schedule WHERE 1=1");
         List<Object> params = new ArrayList<>();
