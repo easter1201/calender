@@ -1,7 +1,5 @@
 package com.example.calender.entity;
 
-
-import jakarta.persistence.Column;
 import lombok.*;
 
 @Getter
@@ -11,10 +9,6 @@ public class User {
     private String userName;
     private String email;
     private String password;
-
-    public User(){
-
-    }
 
     public User(Long userId,String userName, String email, String password){
         this.userId = userId;
