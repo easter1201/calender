@@ -1,8 +1,8 @@
 package com.example.calender.service;
 
 import com.example.calender.dto.*;
-import com.example.calender.entity.Schedule;
-import com.example.calender.entity.User;
+import com.example.calender.entity.*;
+import com.example.calender.exception.*;
 import com.example.calender.repository.*;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +53,7 @@ public class ScheduleServiceImpl implements ScheduleService{
     @Override
     public ScheduleResponse getScheduleById(Long id){
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("찾을 수 없는 일정입니다."));
+                .orElseThrow(() -> new ScheduleNotFoundException("찾을 수 없는 일정입니다."));
 
         String userName = userRepository.findUserNameById(schedule.getUserId());
         return new ScheduleResponse(schedule, userName);
@@ -62,11 +62,11 @@ public class ScheduleServiceImpl implements ScheduleService{
     @Override
     public void deleteSchedule(Long id, String password){
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("제거할 수 없습니다."));
+                .orElseThrow(() -> new ScheduleNotFoundException("제거할 수 없습니다."));
 
         boolean isCorrect = scheduleRepository.checkPassword(schedule.getUserId(), password);
         if(!isCorrect){
-            throw new RuntimeException("비밀번호 불일치");
+            throw new InvalidPasswordException("비밀번호 불일치");
         }
         scheduleRepository.deleteSchedule(schedule);
     }
@@ -84,11 +84,11 @@ public class ScheduleServiceImpl implements ScheduleService{
     @Override
     public ScheduleResponse updateSchedule(Long contentId, String newContent, String newUserName, String password){
         Schedule schedule = scheduleRepository.findById(contentId)
-                .orElseThrow(() -> new RuntimeException("일정 없음"));
+                .orElseThrow(() -> new ScheduleNotFoundException("일정 없음"));
 
         User existingUser = userRepository.findById(schedule.getUserId());
         if(existingUser == null || !existingUser.getPassword().equals(password)){
-            throw new RuntimeException("비밀번호 불일치");
+            throw new InvalidPasswordException("비밀번호 불일치");
         }
 
         schedule.setContent(newContent);
@@ -107,12 +107,16 @@ public class ScheduleServiceImpl implements ScheduleService{
         List<Schedule> schedules = scheduleRepository.findPaged(set, size);
         long totalCnt = scheduleRepository.countAll();
 
-        List<ScheduleResponse> responses = schedules.stream()
-                .map(schedule -> {
-                    User user = userRepository.findById(schedule.getUserId());
-                    String userName = (user != null) ? user.getUserName() : "Unknown";
-                    return new ScheduleResponse(schedule, userName);
-                }).collect(Collectors.toList());
+        if(schedules.isEmpty()) throw new ScheduleNotFoundException("일정 없음");
+
+        List<ScheduleResponse> responses = new ArrayList<>();
+        for(Schedule schedule : schedules){
+            User user = userRepository.findById(schedule.getUserId());
+            if(user == null) throw new ScheduleNotFoundException("정보 없음");
+
+            String userName = (user != null) ? user.getUserName() : "Unknown";
+            responses.add(new ScheduleResponse(schedule, userName));
+        }
         return new PagedScheduleResponse(page, size, totalCnt, responses);
     }
 
@@ -122,12 +126,16 @@ public class ScheduleServiceImpl implements ScheduleService{
         List<Schedule> schedules = scheduleRepository.findFilteredPage(userId, date, set, size);
         long totalCnt = scheduleRepository.countByFilter(userId, date);
 
-        List<ScheduleResponse> responses = schedules.stream().map(
-                schedule -> {
-                    User user = userRepository.findById(schedule.getUserId());
-                    String userName = (user != null) ? user.getUserName() : "Unknown";
-                    return new ScheduleResponse(schedule, userName);
-                }).collect(Collectors.toList());
+        if(schedules.isEmpty()) throw new ScheduleNotFoundException("일정 없음");
+
+        List<ScheduleResponse> responses = new ArrayList<>();
+
+        for(Schedule schedule : schedules){
+                User user = userRepository.findById(schedule.getUserId());
+                if(user == null) throw new ScheduleNotFoundException("정보 없음");
+                String userName = (user != null) ? user.getUserName() : "Unknown";
+                responses.add(new ScheduleResponse(schedule, userName));
+        }
         return new PagedScheduleResponse(page, size, totalCnt, responses);
     }
 }

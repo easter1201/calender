@@ -27,10 +27,4 @@ public class Schedule {
         this.generatedTime = generatedTime;
         this.modifiedTime = modifiedTime;
     }
-
-    public void update(String content, Long userId){
-        this.content = content;
-        this.userId = userId;
-        this.modifiedTime = LocalDateTime.now();
-    }
 }
