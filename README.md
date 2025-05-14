@@ -10,4 +10,4 @@
 | 일정 삭제   | deleteSchedule  | /api/schedules/{Id} | Param: scheduleId = {id}                                                                               | 없음                                                                                                                                                            | 200: 삭제완료 |
 ---
 
-
+![ERD](src/ERD.png)
